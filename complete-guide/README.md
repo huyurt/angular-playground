@@ -1,11 +1,20 @@
-```powershell
-ng new my-first-app
-ng install bootstrap@3
-```
+# INPUT
+
+# OUTPUT
+
+# VIEW ENCAPSULATION
+
+# ACCESS LOCAL REFERENCES
+
+# ACCESS USING VIEWCHILD
+
+# ACCESS USING CONTENTCHILD
+
+# LIFECYCLE HOOKS
 
 
 
-#### [NgModules](https://angular.io/guide/ngmodules)
+### [NgModules](https://angular.io/guide/ngmodules)
 
 **NgModules** configure the injector and the compiler and help organize related things together.
 
@@ -39,7 +48,7 @@ export class AppModule {}
 
 
 
-#### Component Selector
+### Component Selector
 
 ````typescript
 // server.component.ts
@@ -62,7 +71,7 @@ export class AppModule {}
 
 
 
-#### [Data Binding](https://angular.io/guide/binding-syntax)
+### [Data Binding](https://angular.io/guide/binding-syntax)
 
 Data binding automatically keeps your page up-to-date based on your application's state. The target of a data binding can be a property, an event, or an attribute name.
 
@@ -91,7 +100,7 @@ Angular provides three categories of data binding according to the direction of 
 
 
 
-##### Property Binding
+#### Property Binding
 
 ````typescript
 @Component({
@@ -111,11 +120,31 @@ export class ServerComponent implements OnInit {
 }
 ````
 
-<img align="left" src="https://1.bp.blogspot.com/-EpG34MTC6uA/YTE2yHTJxKI/AAAAAAAADRY/2Q4sq5dbYV0h6g2u9RJaUQdeV6MpZ2UjQCLcBGAsYHQ/s0/20210902233943224.gif">
+<img src="https://1.bp.blogspot.com/-EpG34MTC6uA/YTE2yHTJxKI/AAAAAAAADRY/2Q4sq5dbYV0h6g2u9RJaUQdeV6MpZ2UjQCLcBGAsYHQ/s0/20210902233943224.gif">
 
 
 
-##### [Event Binding](https://angular.io/guide/event-binding-concepts)
+##### Custom property binding
+
+###### Input
+
+````typescript
+@Component({
+  template: `
+	<app-server [element]="serverElement" [srvElement]="serverElement"></app-server>
+ `,
+})
+export class ServerComponent {
+  @Input() element: {type: string, name: string, content: string};
+  @Input('srvElement') element2: {type: string, name: string, content: string};
+}
+````
+
+
+
+
+
+#### [Event Binding](https://angular.io/guide/event-binding-concepts)
 
 ````typescript
 @Component({
@@ -124,7 +153,7 @@ export class ServerComponent implements OnInit {
 	<p>{{serverCreationStatus}}</p>
  `,
 })
-export class ServersComponent {
+export class ServerComponent {
   serverCreationStatus = 'No server was created!';
 
   onCreateServer() {
@@ -133,11 +162,11 @@ export class ServersComponent {
 }
 ````
 
-<img align="left" src="https://1.bp.blogspot.com/-PMmtkwBDUi4/YTE7gZAzYHI/AAAAAAAADRg/s1e-aXt_gOUAC8g61RpRKaezFzCQwTf4ACLcBGAsYHQ/s0/20210902235943770.gif">
+<img src="https://1.bp.blogspot.com/-PMmtkwBDUi4/YTE7gZAzYHI/AAAAAAAADRg/s1e-aXt_gOUAC8g61RpRKaezFzCQwTf4ACLcBGAsYHQ/s0/20210902235943770.gif">
 
 
 
-###### Handling events
+##### Handling events
 
 A common way to handle events is to pass the event object, `$event`, to the method handling the event. The `$event` object often contains information the method needs, such as a user's name or an image URL.
 
@@ -178,13 +207,72 @@ export class ServersComponent {
 }
 ````
 
-<img align="left" src="https://1.bp.blogspot.com/-bSrVXr7S8CE/YTE_qURRqwI/AAAAAAAADRo/kz6V9pHzolMY1N5oVH5qzHzw0LG99QIhgCLcBGAsYHQ/s0/20210903001720112.gif">
+<img src="https://1.bp.blogspot.com/-bSrVXr7S8CE/YTE_qURRqwI/AAAAAAAADRo/kz6V9pHzolMY1N5oVH5qzHzw0LG99QIhgCLcBGAsYHQ/s0/20210903001720112.gif">
 
 
 
-##### Two Way Data Binding
+##### Custom event binding
 
-###### [[(ngModel)]](https://angular.io/api/forms/NgModel)
+###### Output
+
+````typescript
+// parent.component
+@Component({
+  template: `
+	<app-child (serverCreated)="onServerAdded($event)" (bpCreated)="onBlueprintAdded($event)"></app-child>
+ `,
+})
+export class ParentComponent {
+  serverElements = [{type: 'server', name: 'Testserver', content: 'Just a test!'}];
+
+  onServerAdded(serverData: {serverName: string, serverContent: string}) {
+    this.serverElements.push({
+        type: 'server',
+        name: serverData.serverName,
+        content: serverData.serverContent
+    });
+  }
+    
+  onBlueprintAdded(blueprintData: {serverName: string, serverContent: string}){
+    this.serverElements.push({
+        type: 'blueprint',
+        name: blueprintData.serverName,
+        content: blueprintData.serverContent
+    });
+  }
+}
+
+// child.component
+@Component({
+  selector: 'app-child'
+})
+export class ChildComponent {
+  @Output() serverCreated = new EventEmitter<{serverName: string, serverContent: string}>();
+  @Output('bpCreated') blueprintCreated = new EventEmitter<{serverName: string, serverContent: string}>();
+  newServerName = '';
+  newServerContent = '';
+
+  onAddServer() {
+    this.serverCreated.emit({
+        serverName: this.newServerName,
+        serverContent: this.newServerContent,
+    });
+  }
+  
+  onAddBlueprint(){
+    this.blueprintCreated.emit({
+        serverName: this.newServerName,
+        serverContent: this.newServerContent,
+    });
+  }
+}
+````
+
+
+
+#### Two Way Data Binding
+
+##### [[(ngModel)]](https://angular.io/api/forms/NgModel)
 
 Creates a `FormControl` instance from a domain model and binds it to a form control element.
 
@@ -216,13 +304,13 @@ export class ServerComponent {
 }
 ```
 
-<img align="left" src="https://1.bp.blogspot.com/-KpF5TLlMaU0/YTEd5qg8MMI/AAAAAAAADRQ/UTyV0TCWmpAQNHRKOc2iQ_ngufpJVNoKwCLcBGAsYHQ/s0/20210902215012325.gif">
+<img src="https://1.bp.blogspot.com/-KpF5TLlMaU0/YTEd5qg8MMI/AAAAAAAADRQ/UTyV0TCWmpAQNHRKOc2iQ_ngufpJVNoKwCLcBGAsYHQ/s0/20210902215012325.gif">
 
 
 
-##### Directives
+### Directives
 
-###### [NgIf](https://angular.io/api/common/NgIf)
+#### [NgIf](https://angular.io/api/common/NgIf)
 
 ````typescript
 @Component({
@@ -267,7 +355,7 @@ export class ServerComponent {
 
 
 
-###### [NgStyle](https://angular.io/api/common/NgStyle)
+#### [NgStyle](https://angular.io/api/common/NgStyle)
 
 Set the font of the containing element to the result of an expression.
 
@@ -314,7 +402,7 @@ export class ServerComponent {
 
 
 
-###### [NgClass](https://angular.io/api/common/NgClass)
+#### [NgClass](https://angular.io/api/common/NgClass)
 
 The CSS classes are updated as follows, depending on the type of the expression evaluation:
 
@@ -366,7 +454,7 @@ export class ServerComponent {
 
 
 
-###### [NgForOf](https://angular.io/api/common/NgForOf)
+#### [NgForOf](https://angular.io/api/common/NgForOf)
 
 ````typescript
 @Component({
@@ -378,4 +466,48 @@ export class ServerComponent {
   servers = ['TestServer', 'TestServer 2'];
 }
 ````
+
+
+
+### View Encapsulation
+
+
+
+
+
+### Access Local Reference
+
+````typescript
+@Component({
+  template: `
+	<input type="text" #serverNameInput>
+	<button (click)="onAddServer(serverNameInput)">Add Server</button>
+ `
+})
+export class ChildComponent {
+  @Output() serverCreated = new EventEmitter<{serverName: string, serverContent: string}>();
+  newServerContent = '';
+
+  onAddServer(nameInput: HTMLElementInput) {
+    this.serverCreated.emit({
+        serverName: nameInput.value,
+        serverContent: this.newServerContent,
+    });
+  }
+}
+````
+
+
+
+### Access Using ViewChild
+
+
+
+### Access Using ContentChild
+
+
+
+### Lifecycle Hooks
+
+
 
