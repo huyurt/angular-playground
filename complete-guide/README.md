@@ -1,19 +1,3 @@
-# INPUT
-
-# OUTPUT
-
-# VIEW ENCAPSULATION
-
-# ACCESS LOCAL REFERENCES
-
-# ACCESS USING VIEWCHILD
-
-# ACCESS USING CONTENTCHILD
-
-# LIFECYCLE HOOKS
-
-
-
 ### [NgModules](https://angular.io/guide/ngmodules)
 
 **NgModules** configure the injector and the compiler and help organize related things together.
@@ -128,6 +112,8 @@ export class ServerComponent implements OnInit {
 
 ###### Input
 
+The `@Input()` decorator in a child component or directive signifies that the property can receive its value from its parent component.
+
 ````typescript
 @Component({
   template: `
@@ -139,8 +125,6 @@ export class ServerComponent {
   @Input('srvElement') element2: {type: string, name: string, content: string};
 }
 ````
-
-
 
 
 
@@ -214,6 +198,8 @@ export class ServersComponent {
 ##### Custom event binding
 
 ###### Output
+
+The `@Output()` decorator in a child component or directive lets data flow from the child to the parent.
 
 ````typescript
 // parent.component
@@ -471,11 +457,34 @@ export class ServerComponent {
 
 ### View Encapsulation
 
+In Angular, component CSS styles are encapsulated into the component's view and don't affect the rest of the application.
 
+To control how this encapsulation happens on a *per component* basis, you can set the *view encapsulation mode* in the component metadata.
+
+- `ShadowDom` view encapsulation uses the browser's native shadow DOM implementation to attach a shadow DOM to the component's host element, and then puts the component view inside that shadow DOM. The component's styles are included within the shadow DOM.
+- `Emulated` view encapsulation (the default) emulates the behavior of shadow DOM by preprocessing (and renaming) the CSS code to effectively scope the CSS to the component's view.
+- `None` means that Angular does no view encapsulation. Angular adds the CSS to the global styles. The scoping rules, isolations, and protections discussed earlier don't apply. This mode is essentially the same as pasting the component's styles into the HTML.
+
+````typescript
+@Component({
+  selector: 'app-shadow-dom-encapsulation',
+  template: `
+    <h2>ShadowDom</h2>
+    <div class="shadow-message">Shadow DOM encapsulation</div>
+    <app-emulated-encapsulation></app-emulated-encapsulation>
+    <app-no-encapsulation></app-no-encapsulation>
+  `,
+  styles: ['h2, .shadow-message { color: blue; }'],
+  encapsulation: ViewEncapsulation.ShadowDom,
+})
+export class ShadowDomEncapsulationComponent { }
+````
 
 
 
 ### Access Local Reference
+
+Template variables help you use data from one part of a template in another part of the template. Use template variables to perform tasks such as respond to user input or finely tune your application's forms.
 
 ````typescript
 @Component({
@@ -501,13 +510,101 @@ export class ChildComponent {
 
 ### Access Using ViewChild
 
+Property decorator that configures a view query. The change detector looks for the first element or the directive matching the selector in the view DOM. If the view DOM changes, and a new child matches the selector, the property is updated.
+
+View queries are set before the `ngAfterViewInit` callback is called.
+
+**Metadata Properties**:
+
+- **selector** - The directive type or the name used for querying.
+- **read** - Used to read a different token from the queried elements.
+- **static** - True to resolve query results before change detection runs, false to resolve after change detection. Defaults to false.
+
+With Angular 8, that should be `@ViewChild('...', {static: true})` since we'll also use the selected element in `ngOnInit`.
+
+````typescript
+@Component({
+  template: `
+	<input type="text" #serverNameInput>
+	<input #serverContentInput type="text">
+	<button (click)="onAddServer(serverNameInput)">Add Server</button>
+ `
+})
+export class ChildComponent {
+  @Output() serverCreated = new EventEmitter<{serverName: string, serverContent: string}>();
+  @ViewChild('serverContentInput', { static: true }) serverName: ElementRef;
+
+  onAddServer(nameInput: HTMLElementInput) {
+    this.serverCreated.emit({
+        serverName: nameInput.value,
+        serverContent: this.serverName.nativeElement.value,
+    });
+  }
+}
+````
+
 
 
 ### Access Using ContentChild
 
+Use to get the first element or the directive matching the selector from the content DOM. If the content DOM changes, and a new child matches the selector, the property will be updated.
+
+Content queries are set before the `ngAfterContentInit` callback is called.
+
+Does not retrieve elements or directives that are in other components' templates, since a component's template is always a black box to its ancestors.
+
+**Metadata Properties**:
+
+- **selector** - The directive type or the name used for querying.
+- **read** - Used to read a different token from the queried element.
+- **static** - True to resolve query results before change detection runs, false to resolve after change detection. Defaults to false.
+
+With Angular 8, that should be `@ViewChild('...', {static: true})` since we'll also use the selected element in `ngOnInit`.
+
+````typescript
+@Component({
+  template: `
+	<p #contentParagraph>
+		<strong *ngIf="serverElement.type === 'server'">{{serverElement.content}}</strong>
+		<em *ngIf="serverElement.type === 'blueprint'">{{serverElement.content}}</em>
+	</p>
+`
+})
+export class ChildComponent implements OnInit {
+  @ContentChild('contentParagraph', { static: true }) paragraph: ElementRef;
+
+  ngOnInit() {
+      console.log('Text Content of paragraph: ' + this.paragraph.nativeElement.textContent);
+  }
+}
+````
 
 
-### Lifecycle Hooks
 
+### [Lifecycle Hooks](https://angular.io/guide/lifecycle-hooks)
 
+A component instance has a lifecycle that starts when Angular instantiates the component class and renders the component view along with its child views. The lifecycle continues with change detection, as Angular checks to see when data-bound properties change, and updates both the view and the component instance as needed. The lifecycle ends when Angular destroys the component instance and removes its rendered template from the DOM. Directives have a similar lifecycle, as Angular creates, updates, and destroys instances in the course of execution.
+
+| Hook method               | Purpose                                                      | Timing                                                       |
+| :------------------------ | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| `ngOnChanges()`           | Respond when Angular sets or resets data-bound input properties. The method receives a `SimpleChanges` object of current and previous property values. Note that this happens very frequently, so any operation you perform here impacts performance significantly. | Called after a bound input property changes. Called before `ngOnInit()` (if the component has bound inputs) and whenever one or more data-bound input properties change.Note that if your component has no inputs or you use it without providing any inputs, the framework will not call `ngOnChanges()`. |
+| `ngOnInit()`              | Initialize the directive or component after Angular first displays the data-bound properties and sets the directive or component's input properties. | Called once the component is initialized. Called once, after the first `ngOnChanges()`. `ngOnInit()` is still called even when `ngOnChanges()` is not (which is the case when there are no template-bound inputs). |
+| `ngDoCheck()`             | Detect and act upon changes that Angular can't or won't detect on its own. | Called during every change detection run. Called immediately after `ngOnChanges()` on every change detection run, and immediately after `ngOnInit()` on the first run. |
+| `ngAfterContentInit()`    | Respond after Angular projects external content into the component's view, or into the view that a directive is in. | Called after content (ng-content) has been projected into view. Called *once* after the first `ngDoCheck()`. |
+| `ngAfterContentChecked()` | Respond after Angular checks the content projected into the directive or component. | Called every time the projected content has been checked. Called after `ngAfterContentInit()` and every subsequent `ngDoCheck()`. |
+| `ngAfterViewInit()`       | Respond after Angular initializes the component's views and child views, or the view that contains the directive. | Called after the component’s view (and child views) has been initialized. Called *once* after the first `ngAfterContentChecked()`. |
+| `ngAfterViewChecked()`    | Respond after Angular checks the component's views and child views, or the view that contains the directive. | Called every time the view (and child views) have been checked. Called after the `ngAfterViewInit()` and every subsequent `ngAfterContentChecked()`. |
+| `ngOnDestroy()`           | Cleanup just before Angular destroys the directive or component. Unsubscribe Observables and detach event handlers to avoid memory leaks. | Called once the component is about to be destroyed. Called immediately before Angular destroys the directive or component. |
+
+#### Cleaning up on instance destruction
+
+Put cleanup logic in `ngOnDestroy()`, the logic that must run before Angular destroys the directive.
+
+This is the place to free resources that won't be garbage-collected automatically. You risk memory leaks if you neglect to do so.
+
+- Unsubscribe from Observables and DOM events.
+- Stop interval timers.
+- Unregister all callbacks that the directive registered with global or application services.
+
+The `ngOnDestroy()` method is also the time to notify another part of the application that the component is going away.
 
