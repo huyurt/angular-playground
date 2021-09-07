@@ -296,7 +296,7 @@ export class ServerComponent {
 
 ### Directives
 
-#### [NgIf](https://angular.io/api/common/NgIf)
+##### [NgIf](https://angular.io/api/common/NgIf)
 
 ````typescript
 @Component({
@@ -341,7 +341,7 @@ export class ServerComponent {
 
 
 
-#### [NgStyle](https://angular.io/api/common/NgStyle)
+##### [NgStyle](https://angular.io/api/common/NgStyle)
 
 Set the font of the containing element to the result of an expression.
 
@@ -388,7 +388,7 @@ export class ServerComponent {
 
 
 
-#### [NgClass](https://angular.io/api/common/NgClass)
+##### [NgClass](https://angular.io/api/common/NgClass)
 
 The CSS classes are updated as follows, depending on the type of the expression evaluation:
 
@@ -440,7 +440,7 @@ export class ServerComponent {
 
 
 
-#### [NgForOf](https://angular.io/api/common/NgForOf)
+##### [NgForOf](https://angular.io/api/common/NgForOf)
 
 ````typescript
 @Component({
@@ -451,6 +451,136 @@ export class ServerComponent {
 export class ServerComponent {
   servers = ['TestServer', 'TestServer 2'];
 }
+````
+
+
+
+##### [NgSwitch](https://angular.io/api/common/NgSwitch)
+
+````typescript
+@Component({
+  template: `
+	<div [ngSwitch]="value">
+		<p *ngSwitchCase="5">Value is {{value}}</p>
+		<p *ngSwitchCase="10">Value is {{value}}</p>
+		<p *ngSwitchCase="100">Value is {{value}}</p>
+		<p *ngSwitchDefault>Value is Default</p>
+	</div>
+ `
+})
+export class ServerComponent {
+  value = 5;
+}
+````
+
+
+
+##### [NgClass](https://angular.io/api/common/NgClass)
+
+**NgClass,** adds and removes CSS classes on an HTML element.
+
+````typescript
+<some-element [ngClass]="'first second'">...</some-element>
+
+<some-element [ngClass]="['first', 'second']">...</some-element>
+
+<some-element [ngClass]="{'first': true, 'second': true, 'third': false}">...</some-element>
+
+<some-element [ngClass]="stringExp|arrayExp|objExp">...</some-element>
+
+<some-element [ngClass]="{'class1 class2 class3' : true}">...</some-element>
+
+
+@Component({
+  template: `
+	<li [ngClass]="{odd: odd % 2 === 0}"></li>
+ `,
+  styles: [`
+    .odd {
+      color: red;
+    }
+  `]
+})
+````
+
+
+
+##### [NgStyle](https://angular.io/api/common/NgStyle)
+
+**NgStyle,** an attribute directive that updates styles for the containing HTML element. Sets one or more style properties, specified as colon-separated key-value pairs. The key is a style name, with an optional `.<unit>` suffix (such as 'top.px', 'font-style.em'). The value is an expression to be evaluated. The resulting non-null value, expressed in the given unit, is assigned to the given style property. If the result of evaluation is null, the corresponding style is removed.
+
+````typescript
+<some-element [ngStyle]="{'font-style': styleExp}">...</some-element>
+
+<some-element [ngStyle]="{'max-width.px': widthExp}">...</some-element>
+
+<some-element [ngStyle]="objExp">...</some-element>
+
+
+@Component({
+  template: `
+	<li [ngStyle]="{backgroundColor: odd % 2 === 0 ? 'yellow' : 'transparent'}"></li>
+ `
+})
+````
+
+
+
+#### [Create Attribute Directive](https://angular.io/guide/attribute-directives)
+
+````typescript
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective implements OnInit {
+  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
+    el.nativeElement.style.backgroundColor = 'yellow';
+  }
+    
+  ngOnInit(): void {
+    this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'orange');
+  }
+}
+
+
+@Component({
+  template: `
+	<p appHighlight>Style me with basic directive!</p>
+ `
+})
+````
+
+![](https://1.bp.blogspot.com/-iWTNVxzBWZw/YTfE_4MRrCI/AAAAAAAADR4/JG8uoyompc0r09uwG76Kiz1pbXqF1eebwCLcBGAsYHQ/s0/20210907230000212.png)
+
+
+
+#### [Create Structural Directive](https://angular.io/guide/structural-directives)
+
+````typescript
+@Directive({
+  selector: '[appUnless]'
+})
+export class UnlessDirective {
+  @Input() set appUnless(condition: boolean){
+    if(!condition) {
+      this.vcRef.createEmbeddedView(this.templateRef);
+    } else {
+      this.vcRef.clear();
+    }
+  }
+  
+  constructor(private templateRef: TemplateRef<any>, private vcRef: ViewContainerRef) {
+  }
+}
+
+
+@Component({
+  template: `
+	<div *appUnless="onlyOdd">
+		...
+	</div>
+ `
+})
 ````
 
 
@@ -607,4 +737,69 @@ This is the place to free resources that won't be garbage-collected automaticall
 - Unregister all callbacks that the directive registered with global or application services.
 
 The `ngOnDestroy()` method is also the time to notify another part of the application that the component is going away.
+
+
+
+### [Renderer2](https://angular.io/api/core/Renderer2)
+
+Extend this base class to implement custom rendering. By default, Angular renders a template into DOM. You can use custom rendering to intercept rendering calls, or to render to something other than DOM.
+
+
+
+### [HostListener](https://angular.io/api/core/HostListener)
+
+Decorator that declares a DOM event to listen for, and provides a handler method to run when that event occurs.
+
+Angular invokes the supplied handler method when the host element emits the specified event, and updates the bound element with the result.
+
+If the handler method returns false, applies `preventDefault` on the bound element.
+
+| Option                                                       | Description                                                  |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| [`eventName?`](https://angular.io/api/core/HostListener#eventName) | The DOM event to listen for.                                 |
+| [`args?`](https://angular.io/api/core/HostListener#args)     | A set of arguments to pass to the handler method when the event occurs. |
+
+````typescript
+@Component({
+  template: `
+	<h1>{{counter}} number of times!</h1> Press any key to increment the counter.
+`
+})
+export class AppComponent {
+  counter = 0;
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    this.counter++;
+  }
+}
+````
+
+
+
+### [HostBinding](https://angular.io/api/core/HostBinding)
+
+Decorator that marks a DOM property as a host-binding property and supplies configuration metadata. Angular automatically checks host property bindings during change detection, and if a binding changes it updates the host element of the directive.
+
+````typescript
+@Component({
+  template: `
+	<h1>{{counter}} number of times!</h1> Press any key to increment the counter.
+`
+})
+export class AppComponent {
+  @HostBinding('style.backgroundColor') backgroundColor: string = 'transparent';
+    
+  //constructor(private elementRef: ElementRef, private renderer: Renderer2) {
+  //}
+    
+  @HostListener('mouseenter') mouseover(eventData: Event){
+    //this.renderer.setStyle(this.elementRef.nativeElement, 'background-color', 'blue');
+    this.backgroundColor = 'blue';
+  }
+    
+  @HostListener('mouseleave') mouseleave(eventData: Event){
+    this.backgroundColor = 'transparent';
+  }
+}
+````
 
