@@ -285,7 +285,7 @@ export class ServerComponent {
   name: string = '';
 
   setValue() {
-    this.name = 'Hudayfee';
+    this.name = 'Hudayfe';
   }
 }
 ```
