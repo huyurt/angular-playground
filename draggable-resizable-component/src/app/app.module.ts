@@ -14,6 +14,7 @@ import {FormsModule} from "@angular/forms";
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AngularDraggableModule,
     BrowserModule,
     StimulsoftViewerModule,

@@ -1,17 +1,31 @@
-<div class="iframe-drag-bounds" #dragBounds id="dragBounds" style="width: 1169px; height: 827px; padding: 39px">
+<div class="iframe-drag-bounds" #dragBounds id="dragBounds">
   <div class="iframe-resize-container"
        ngResizable
        rzHandles="n,s,e,w,se,sw"
        ngDraggable
        rzContainment="#dragBounds"
-       [handle]="dragHandle"
        [bounds]="dragBounds"
        [inBounds]="true"
-       [preventDefaultEvent]="true">
-    <div #dragHandle class="iframe-drag-handle">
-      <p> Draggable & Resizable </p>
-    </div>
-    <iframe src="https://google.com" scrolling="no" width="100%" class="iframe-content"></iframe>
+       [rzMinWidth]="20"
+       [rzMinHeight]="20"
+       [preventDefaultEvent]="true"
+       style="top: 250px; left: 400px; width: 250px; height: 100px;"
+  >
+    <span>Adres Müşteri Keçiören Ankara</span>
+  </div>
+  <div class="iframe-resize-container"
+       ngResizable
+       rzHandles="n,s,e,w,se,sw"
+       ngDraggable
+       rzContainment="#dragBounds"
+       [bounds]="dragBounds"
+       [inBounds]="true"
+       [rzMinWidth]="20"
+       [rzMinHeight]="20"
+       [preventDefaultEvent]="true"
+       style="top: 150px; left: 500px; width: 200px; height: 300px;"
+  >
+    <span>Müşteri Adı Soyadı</span>
   </div>
 </div>
 
