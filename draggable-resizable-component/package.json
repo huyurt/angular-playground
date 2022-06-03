@@ -18,7 +18,7 @@
     "@angular/platform-browser": "~12.2.0",
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
-    "angular2-draggable": "^2.3.2",
+    "angular2-draggable-zi": "^2.3.2",
     "rxjs": "~6.6.0",
     "stimulsoft-designer-angular": "^2021.4.3",
     "stimulsoft-viewer-angular": "^2021.4.3",

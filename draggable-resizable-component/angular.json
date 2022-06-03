@@ -27,7 +27,7 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/angular2-draggable/css/resizable.min.css",
+              "node_modules/angular2-draggable-zi/css/resizable.min.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -95,7 +95,7 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/angular2-draggable/css/resizable.min.css",
+              "node_modules/angular2-draggable-zi/css/resizable.min.css",
               "src/styles.css"
             ],
             "scripts": []
