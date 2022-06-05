@@ -1,11 +1,23 @@
-.iframe-drag-bounds {
-  width: 1169px;
-  height: 827px;
-  border: 1px dashed #A4B7C1;
-  position: absolute;
+.page {
+  width: 300mm;
+  min-height: 297mm;
+  height: 90vh;
+  background-color: lightgrey;
+  display: flex;
+  justify-content: center;
 }
 
-.iframe-resize-container {
+.div-drag-bounds {
+  width: 210mm;
+  height: 297mm;
+  min-width: 210mm;
+  min-height: 297mm;
+  max-width: 210mm;
+  max-height: 297mm;
+  background-color: white;
+}
+
+.div-resize-container {
   position: absolute;
   width: 200px;
   height: 50px;
@@ -14,7 +26,7 @@
   border: 1px solid #e8e7e7;
 }
 
-.iframe-resize-container:hover {
+.div-resize-container:hover {
   border: 1px solid #22C39E;
 }
 
