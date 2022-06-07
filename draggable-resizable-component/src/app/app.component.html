@@ -1,34 +1,3 @@
 <div class="page">
-  <div class="div-drag-bounds" #dragBounds id="dragBounds">
-    <div class="div-resize-container"
-         ngResizable
-         rzHandles="n,s,e,w,se,sw"
-         ngDraggable
-         rzContainment="#dragBounds"
-         [bounds]="dragBounds"
-         [inBounds]="true"
-         [rzMinWidth]="20"
-         [rzMinHeight]="20"
-         [position]="{ x: 400, y: 300 }"
-         [preventDefaultEvent]="true"
-         style="width: 250px; height: 100px;"
-    >
-      <span>Adres Müşteri Keçiören Ankara</span>
-    </div>
-    <div class="div-resize-container"
-         ngResizable
-         rzHandles="n,s,e,w,se,sw"
-         ngDraggable
-         rzContainment="#dragBounds"
-         [bounds]="dragBounds"
-         [inBounds]="true"
-         [rzMinWidth]="20"
-         [rzMinHeight]="20"
-         [position]="{ x: 500, y: 200 }"
-         [preventDefaultEvent]="true"
-         style="width: 200px; height: 300px;"
-    >
-      <span>Müşteri Adı Soyadı</span>
-    </div>
-  </div>
+  <ng-ruler></ng-ruler>
 </div>
