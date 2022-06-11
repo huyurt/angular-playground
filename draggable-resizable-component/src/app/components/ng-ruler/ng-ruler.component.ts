@@ -1,6 +1,16 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import ResizeObserver from 'resize-observer-polyfill';
 import { DataService } from './data.service';
+import { CdkDragDrop, CdkDragRelease, CdkDragStart } from '@angular/cdk/drag-drop';
+import { DynamicComponentComponent } from '../dynamic-component/dynamic-component.component';
 
 @Component({
   selector: 'ng-ruler',
@@ -11,15 +21,17 @@ export class NgRulerComponent implements OnInit {
   @ViewChild('canvasWrapper', {static: true}) wrapper!: ElementRef;
   @ViewChild('canvasHorizontal', {static: true}) canvasHorizontal!: ElementRef<HTMLCanvasElement>;
   @ViewChild('canvasVertical', {static: true}) canvasVertical!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('dragBounds', {static: true}) dragBounds!: ElementRef;
+  @ViewChild('dragBoundsChild', {read: ViewContainerRef}) dragBoundsChild!: ViewContainerRef;
 
   @Input() rulerThickness: number = 25; // Thickness of the window ruler
   @Input() parentScale: number = 37.795275591; // Parent scale of the window ruler
-  @Input() childScale: number = 0; // Child scale of the window ruler
-  @Input() rulerColor: string = '#b9b7b5'; // Background color of the window ruler
+  @Input() childScale: number = 10; // Child scale of the window ruler
+  @Input() rulerColor: string = 'lightgrey'; // Background color of the window ruler
   @Input() scaleColor: string = '#606060'; // Color of the scale of the window ruler
   @Input() numColor: string = '#403637'; // Color of the number printed in the window ruler
   @Input() borderColor: string = '#606060'; // Border color of the window ruler
-  @Input() fontType: string = 'bold sans-serif'; // Font of the window ruler
+  @Input() fontType: string | undefined; // Font of the window ruler
   private rulerWidth: number = Math.round(210 * 3.7795275591 + 25);
   private rulerHeight: number = Math.round(297 * 3.7795275591 + 25);
 
@@ -31,7 +43,10 @@ export class NgRulerComponent implements OnInit {
   private newOffsetX: number = 0;
   private newOffsetY: number = 0;
 
-  constructor(private dataService: DataService) {
+  constructor(
+    private dataService: DataService,
+    private componentFactoryResolver: ComponentFactoryResolver,
+  ) {
   }
 
   ngOnInit() {
@@ -65,7 +80,7 @@ export class NgRulerComponent implements OnInit {
     );
     this.ctxL.strokeStyle = this.scaleColor;
     this.ctxL.lineWidth = 1;
-    this.ctxL.font = this.fontType;
+    if (this.fontType) this.ctxL.font = this.fontType;
     this.ctxL.fillStyle = this.numColor;
     this.ctxL.stroke();
   }
@@ -151,7 +166,7 @@ export class NgRulerComponent implements OnInit {
     );
     this.ctxC.strokeStyle = this.scaleColor;
     this.ctxC.lineWidth = 1;
-    this.ctxC.font = this.fontType;
+    if (this.fontType) this.ctxC.font = this.fontType;
     this.ctxC.fillStyle = this.numColor;
     this.ctxC.stroke();
   }
@@ -228,5 +243,45 @@ export class NgRulerComponent implements OnInit {
   _fillTextLine(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
     const resY = y + 10;
     ctx.fillText(text.toString(), x, resY);
+  }
+
+
+  // Drag drop list
+  bodyElement: HTMLElement = document.body;
+
+  movies = [
+    'E-Posta Adresi',
+    'Telefon No',
+    'Posta Kodu',
+  ];
+
+  transferredList: string[] = [];
+
+  dragStart(event: CdkDragStart) {
+    this.bodyElement.classList.add('inheritCursors');
+    this.bodyElement.style.cursor = 'grabbing';
+    //replace 'move' with what ever type of cursor you want
+  }
+
+  dragDrop(event: CdkDragDrop<string[]>) {
+    if (event.isPointerOverContainer) {
+      const index1 = event.previousIndex;
+      const item = this.movies.splice(index1, 1)[0];
+      this.transferredList.push(item);
+
+      this.createElement(item, event.dropPoint);
+    }
+  }
+
+  dragRelease(event: CdkDragRelease) {
+    this.bodyElement.classList.remove('inheritCursors');
+    this.bodyElement.style.cursor = 'unset';
+  }
+
+  createElement(item: string, dropPoint: { x: number, y: number }) {
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(DynamicComponentComponent);
+    const component = this.dragBoundsChild.createComponent(componentFactory);
+    component.instance.content = item;
+    component.instance.dropPoint = dropPoint;
   }
 }

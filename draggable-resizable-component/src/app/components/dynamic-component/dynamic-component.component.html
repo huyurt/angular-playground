@@ -1,0 +1,14 @@
+<div class="div-resize-container"
+     ngClosable
+     ngResizable
+     rzHandles="n,s,e,w,se,sw,nw"
+     ngDraggable
+     rzContainment="#dragBounds"
+     bounds="#dragBounds"
+     [inBounds]="true"
+     [position]="dropPoint"
+     [preventDefaultEvent]="true"
+     style="width: 150px; height: 100px;"
+>
+  <span>{{content}}</span>
+</div>

@@ -27,9 +27,10 @@
               "src/assets"
             ],
             "styles": [
+              "src/custom-theme.scss",
               "node_modules/angular2-draggable-zi/css/resizable.min.css",
               "node_modules/angular2-draggable-zi/css/closable.min.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -97,7 +98,7 @@
             ],
             "styles": [
               "node_modules/angular2-draggable-zi/css/resizable.min.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }
