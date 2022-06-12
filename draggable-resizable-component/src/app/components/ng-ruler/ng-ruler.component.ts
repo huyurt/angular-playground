@@ -249,7 +249,7 @@ export class NgRulerComponent implements OnInit {
   // Drag drop list
   bodyElement: HTMLElement = document.body;
 
-  movies = [
+  contents = [
     'E-Posta Adresi',
     'Telefon No',
     'Posta Kodu',
@@ -266,7 +266,7 @@ export class NgRulerComponent implements OnInit {
   dragDrop(event: CdkDragDrop<string[]>) {
     if (event.isPointerOverContainer) {
       const index1 = event.previousIndex;
-      const item = this.movies.splice(index1, 1)[0];
+      const item = this.contents.splice(index1, 1)[0];
       this.transferredList.push(item);
 
       this.createElement(item, event.dropPoint);

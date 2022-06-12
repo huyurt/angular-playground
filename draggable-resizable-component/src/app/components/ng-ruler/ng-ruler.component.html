@@ -14,8 +14,7 @@
            rzContainment="#dragBounds"
            [bounds]="dragBounds"
            [inBounds]="true"
-           [rzMinWidth]="20"
-           [rzMinHeight]="20"
+           [showMoveHandler]="true"
            [position]="{ x: 200, y: 400 }"
            [preventDefaultEvent]="true"
            style="width: 250px; height: 100px;"
@@ -30,8 +29,7 @@
            rzContainment="#dragBounds"
            [bounds]="dragBounds"
            [inBounds]="true"
-           [rzMinWidth]="20"
-           [rzMinHeight]="20"
+           [showMoveHandler]="true"
            [position]="{ x: 300, y: 300 }"
            [preventDefaultEvent]="true"
            style="width: 200px; height: 300px;"
@@ -51,10 +49,10 @@
   <div
     cdkDrag
     class="drag-item"
-    *ngFor="let movie of movies"
+    *ngFor="let content of contents"
     (cdkDragStarted)="dragStart($event)"
     (cdkDragReleased)="dragRelease($event)"
   >
-    {{movie}}
+    {{content}}
   </div>
 </div>
